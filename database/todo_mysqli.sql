@@ -1,14 +1,15 @@
+/* Database Name: todo ,Database File:todo_mysqli.sql */
 DROP TABLE IF EXISTS Tasks;
-
-DROP TABLE IF EXISTS Category;
 
 DROP TABLE IF EXISTS TaskCategory;
 
+-- Create Table for TaskCategory
 CREATE TABLE IF NOT EXISTS TaskCategory (
     CategoryID int(10) PRIMARY KEY AUTO_INCREMENT,
     CategoryName varchar(30) NOT NULL
 );
 
+-- Create Table for Task with TaskCategory as Foreign Key
 CREATE TABLE IF NOT EXISTS Task (
     TaskID int(10) PRIMARY KEY AUTO_INCREMENT,
     CategoryID int(10) NOT NULL,
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS Task (
     CONSTRAINT FK_Task_TaskCategory FOREIGN KEY (CategoryID) REFERENCES TaskCategory(CategoryID)
 );
 
+-- Insert Rows/Records into the TaskCategory Table
 INSERT INTO
     `TaskCategory` (CategoryID, CategoryName)
 VALUES
@@ -27,6 +29,7 @@ VALUES
     (3, 'Health'),
     (4, 'Leisure');
 
+-- INSERT Rows/Records into the Task table
 INSERT INTO
     `Task` (
         TaskID,

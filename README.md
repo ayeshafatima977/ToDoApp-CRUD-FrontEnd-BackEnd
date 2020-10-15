@@ -12,8 +12,9 @@ For getting competent for developing a database for To-Do App using MySQLi and P
 
 ## Requirements:
 
-1. Create an ERD of your database
-2. Create an SQL file to import and create tables/seed any data (An instructor should be able to import your SQL file and be ready to go.) Make sure your .sql file has the name of the database at the top like this: -- Database: `adventureworks`
+1. Create an ERD of your database-ERD Image was created using draw.io and Can be found in ERD Folder
+2. Create an SQL file to import and create tables/seed any data (An instructor should be able to import your SQL file and be ready to go.)
+   Note: DataBase Can be found in database folder with File name as todo_mysqli.sql and databaseName as: `todo`
 3. A task has a due date
 4. A task has a category
    In the screenshot above there are two categories, Chores and Homework
@@ -39,3 +40,4 @@ https://trello.com/b/L8wJf7BI/sql-todo
 
 1. https://www.w3schools.com/php/php_mysql_intro.asp
 2. https://drive.google.com/file/d/1cfKjysO-IAznZ5sUphKVgnbbMsT326M2/view
+3. https://dev.mysql.com/doc/refman/8.0/en/comments.html
