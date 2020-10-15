@@ -28,6 +28,7 @@ if ($categories_result->num_rows > 0) {
     }
 }
 
+// To generate the Task List
 $task_list_sql = "SELECT * FROM task";
 
 if (!$result = $connection->query($task_list_sql)) {
@@ -35,10 +36,24 @@ if (!$result = $connection->query($task_list_sql)) {
     exit();
 }
 
+// To check if there are any empty records/rows
 if (0 === $result->num_rows) {
     $task_list = '<tr><td colspan="4">There are no Active Things To Do</td></tr>';
 } else {
     while ($row = $result->fetch_assoc()) {
+        $task_list .= sprintf('
+        <tr>
+            <td>%d</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td><a href="task_edit.php?task_id=%d">Edit</a></td>
+        </tr>
+        ',
+            $row['TaskID'],
+            $row['TaskName'],
+            $row['EndDate'],
+            $row['TaskID']
+        );
 
     }
 }
@@ -111,17 +126,12 @@ $connection->close();
         <h2>Things To Do</h2>
         <table>
             <tr>
-                <th>Category ID</th>
+                <th>Task ID</th>
                 <th>Task Name</th>
                 <th>End Date</th>
                 <th>Actions</th>
             </tr>
-            <tr>
-                <td>1</td>
-                <td>Shopping</td>
-                <td>2020-10-15</td>
-                <td>Edit</td>
-            </tr>
+
             <?php echo $task_list; ?>
 
         </table>
