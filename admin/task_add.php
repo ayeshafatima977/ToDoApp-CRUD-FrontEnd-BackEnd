@@ -1,6 +1,9 @@
 <?php
 require '../constants.php';
 $categories_select_options = null;
+$message = null;
+
+// Query for Selection of Category
 $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
 
 // Creating a connection and testing if connection is established or not
@@ -24,7 +27,32 @@ if ($categories_result->num_rows > 0) {
     }
 }
 
+if ($_POST) {
+    echo '<pre>';
+    print_r($_POST);
+    echo '</pre>';
+
+    // Add task to the list
+    if ($insert = $connection->prepare("INSERT INTO task(TaskID, CategoryID, TaskName, TaskTimeMinutes, StartDate,EndDate)
+    VALUES(NULL, ?, ?, ?, ?, ?)")) {
+        if ($insert->bind_param("isdss", $_POST['task_category'], $_POST['task_name'], $_POST['task_time'], $_POST['start_date'], $_POST['end_date'])) {
+            if ($insert->execute()) {
+                $message = "You have added " . $_POST['task_name'] . " to the database";
+            } else {
+                exit("There was a problem with the execute");
+            }
+        } else {
+            exit("There was a problem with the bind_param");
+        }
+    } else {
+        exit("There was a problem with the prepare statement");
+    }
+
+}
+$connection->close();
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,12 +66,20 @@ if ($categories_result->num_rows > 0) {
 <body>
     <h1>My ToDo List </h1>
     <h2>Add Todo</h2>
+    <?php if ($message) {
+    echo $message;
+}
+?>
     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
 
-        <label for="task">Task</label>
-        <input type="text" id="task" name="task">
-        <label for="due_date">Due Date</label>
-        <input type="date" name="due_date" min="2020-08-01" max="2021-01-01">
+        <label for="task_name">Task</label>
+        <input type="text" id="task_name" name="task_name">
+        <label for="task_time">Task Time(Minutes)</label>
+        <input type="number" step="any" name="task_time" id="task_time">
+        <label for="start_date">Start Date</label>
+        <input type="date" name="start_date" min="2020-08-01" max="2021-03-01">
+        <label for="end_date">End Date</label>
+        <input type="date" name="end_date" min="2020-08-01" max="2021-03-01">
         <label for="task_category">Task Category</label>
         <select name="task_category" id="task_category">
             <option value="">Pick a Category</option>

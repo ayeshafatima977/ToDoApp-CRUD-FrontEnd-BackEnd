@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Task (
     TaskID int(10) PRIMARY KEY AUTO_INCREMENT,
     CategoryID int(10) NOT NULL,
     TaskName varchar(30) NOT NULL,
-    TaskTimeMinutes float(4, 2) NULL,
+    TaskTimeMinutes double(4, 2) NULL,
     StartDate date NULL,
     EndDate date NULL,
     CONSTRAINT FK_Task_TaskCategory FOREIGN KEY (CategoryID) REFERENCES TaskCategory(CategoryID)
@@ -46,7 +46,7 @@ VALUES
         'Learn PHP',
         60,
         '2020-10-10',
-        NULL
+        '2020-10-15'
     ),
     (
         NULL,
@@ -75,10 +75,10 @@ VALUES
     (
         NULL,
         2,
-        'Vacum',
+        'Laundry',
         60,
-        '2020-10-20',
-        NULL
+        '2020-10-15',
+        '2020-11-08'
     ),
     (
         NULL,
@@ -86,7 +86,7 @@ VALUES
         'Cooking',
         60,
         '2020-10-16',
-        NULL
+        '2020-11-18'
     ),
     (
         NULL,
@@ -94,7 +94,7 @@ VALUES
         'Yoga',
         60,
         '2020-10-20',
-        NULL
+        '2020-10-25'
     ),
     (
         NULL,
@@ -109,14 +109,14 @@ VALUES
         4,
         'Movie Night',
         60,
-        '2020-10-25',
-        NULL
+        '2020-10-16',
+        '2020-10-16'
     ),
     (
         NULL,
         4,
         'Hiking',
         120,
-        '2020-10-28',
-        NULL
+        '2020-10-15',
+        '2020-10-15'
     );
