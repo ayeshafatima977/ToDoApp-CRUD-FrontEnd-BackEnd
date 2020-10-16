@@ -3,69 +3,105 @@ require '../constants.php';
 $categories_select_options = null;
 $message = null;
 $task_list = null;
+$temp_taskName = null;
 
 // Creating a connection and testing if connection is established or not
+
 $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 if ($connection->connect_errno) {
     die('Connection failed: ' . $connection->connect_error);
 }
 
-// Query for Selection of Category
-$categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
+if (isset($_POST['task_name'])) {
 
-if (!$categories_result = $connection->query($categories_sql)) {
-    echo "Something went wrong with the categories query";
-    exit();
-}
-//To generate the Category from data base
-if ($categories_result->num_rows > 0) {
-    while ($categories = $categories_result->fetch_assoc()) {
-        $categories_select_options .= sprintf('
-                    <option value="%s">%s</option>
-                ',
-            $categories['CategoryID'],
-            $categories['CategoryName']
-        );
+    //Assigning temporary variable so that task doesn't repeat when you refresh
+    $temp_taskName = $_POST['task_name'];
+
+    // Query to get tasks from the database
+    $task_list_sql = "SELECT * FROM task";
+    $repeated_tasks_flag = false;
+
+    $result = $connection->query($task_list_sql);
+    while ($row = $result->fetch_assoc()) {
+        // Add other categories
+        if ($temp_taskName === $row['TaskName']) {
+            $repeated_tasks_flag = true;
+        }
+    }
+    if (!$repeated_tasks_flag) {
+        //Sanitize Input fields using PREPARE statement
+        // Add task to the list Here ? indicate Placeholders for the text
+        $insert = $connection->prepare("INSERT INTO task(TaskID, CategoryID, TaskName, TaskTimeMinutes, StartDate,EndDate)
+    VALUES(NULL, ?, ?, ?, ?, ?)");
+        //Since Task id is NULL and auto incremented it is not accounted here; i is integer for CategoryID;s is string for task Name;
+        //d is for double for TaskTime Minutes;s is string for start date; and s is string for end date
+        $insert->bind_param("isdss", $_POST['task_category'], $_POST['task_name'], $_POST['task_time'], $_POST['start_date'], $_POST['end_date']);
+        if ($insert->execute()) {
+            $message = "You have added " . $_POST['task_name'] . " to the database";
+        } else {
+            exit("There was a problem with adding a task");
+        }
+        $insert->close();
     }
 }
+if (isset($_GET)) {
+    // Query to generate selection of category from database
+    $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
+    if (!$categories_result = $connection->query($categories_sql)) {
+        echo "Something went wrong with the categories query";
+        exit();
+    }
 
-// To generate the Task List
-$task_list_sql = "SELECT * FROM task";
+    if ($categories_result->num_rows > 0) {
+        while ($categories = $categories_result->fetch_assoc()) {
+            $categories_select_options .= sprintf('
+                        <option value="%s">%s</option>
+                    ',
+                $categories['CategoryID'],
+                $categories['CategoryName']
+            );
+        }
+    }
 
-if (!$result = $connection->query($task_list_sql)) {
-    echo "Something went wrong with the task list query";
-    exit();
-}
+    //To generate the Task List
+    $task_list_sql = "SELECT * FROM task";
 
-// To check if there are any empty records/rows
-if (0 === $result->num_rows) {
-    $task_list = '<tr><td colspan="5">There are no Active Things To Do</td></tr>';
-} else {
-    while ($row = $result->fetch_assoc()) {
-        $task_list .= sprintf('
-        <tr>
-            <td>%d</td>
-            <td>%s</td>
-            <td>%s</td>
-            <td>%s</td>
-            <td><a href="task_complete.php?task_id=%d">Complete</a></td>
-            <td><a href="task_delete.php?task_id=%d">Remove</a></td>
-        </tr>
-        ',
-            $row['TaskID'],
-            $row['TaskName'],
-            $row['StartDate'],
-            $row['EndDate'],
-            $row['TaskID'],
-            $row['TaskID']
-        );
+    if (!$result = $connection->query($task_list_sql)) {
+        echo "Something went wrong with the task list query";
+        exit();
+    }
 
+    // To check if there are any empty records/rows
+    if (0 === $result->num_rows) {
+        $task_list = '<tr><td colspan="4">There are no Active Things To Do</td></tr>';
+    } else {
+        while ($row = $result->fetch_assoc()) {
+
+            $task_list .= sprintf('
+            <tr>
+                <td>%d</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td><a href="task_add.php?task_id=%d&operation=%s">Complete</a></td>
+                <td><a href="task_add.php?task_id=%d&operation=%s">Delete</a></td>
+            </tr>
+            ',
+                $row['TaskID'],
+                $row['TaskName'],
+                $row['EndDate'],
+                $row['TaskID'],
+                "complete",
+                $row['TaskID'], "delete"
+            );
+
+        }
     }
 }
 
 $connection->close();
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -78,12 +114,7 @@ $connection->close();
 <body>
     <h1>My ToDo List </h1>
     <h2>Add Todo</h2>
-    <?php if ($message) {
-    echo $message;
-}
-?>
-    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
-
+    <form action="#" method="POST" id="todo_form">
         <label for="task_name">Task</label>
         <input type="text" id="task_name" name="task_name">
         <label for="task_time">Task Time(Minutes)</label>
@@ -98,20 +129,25 @@ $connection->close();
             <?php echo $categories_select_options; ?>
         </select>
         <input type="submit" value="Add new task">
-        <input type="submit" name="reset" value="Reset" />
-        <h2>Things To Do</h2>
-        <table>
-            <tr>
-                <th>Task ID</th>
-                <th>Task Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Actions</th>
-            </tr>
-            <?php echo $task_list; ?>
-
-        </table>
     </form>
+    <h2>Things To Do</h2>
+    <table>
+        <tr>
+            <th>Task ID</th>
+            <th>Task Name</th>
+            <th>End Date</th>
+            <th>Completed</th>
+            <th>Deleted</th>
+        </tr>
+
+        <?php echo $task_list; ?>
+
+    </table>
+    <h2>Overdue Tasks</h2>
+
+    <h2>Completed Tasks</h2>
+
+
 
 </body>
 

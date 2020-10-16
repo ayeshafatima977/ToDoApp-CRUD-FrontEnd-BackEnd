@@ -41,3 +41,4 @@ https://trello.com/b/L8wJf7BI/sql-todo
 1. https://www.w3schools.com/php/php_mysql_intro.asp
 2. https://drive.google.com/file/d/1cfKjysO-IAznZ5sUphKVgnbbMsT326M2/view
 3. https://dev.mysql.com/doc/refman/8.0/en/comments.html
+4. https://www.mysqltutorial.org/mysql-boolean/
