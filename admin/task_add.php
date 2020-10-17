@@ -5,10 +5,11 @@ $message = null;
 $task_list = null;
 $task_name = null;
 $temp_taskName = null;
-$staff_id = null;
+$task_id = null;
 $operation = null;
 $task_status_message = null;
-$completed_form = null;
+$delete_form = true;
+$delete_message = null;
 
 // Creating a connection and testing if connection is established or not
 
@@ -21,7 +22,6 @@ if (isset($_POST['task_name'])) {
 
     //Assigning temporary variable so that task doesn't repeat when you refresh
     $temp_taskName = $_POST['task_name'];
-
     // Query to get tasks from the database
     $task_list_sql = "SELECT * FROM task";
     $repeated_tasks_flag = false;
@@ -56,8 +56,45 @@ if (isset($_POST['task_name'])) {
         $insert->close();
     }
 }
+//Don't Submit the Form or Continue-If we don't have a task id
+if (!$_POST) {
+    if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
+        exit("You have reached this page by mistake");
+    }
+    if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
+        $task_id = $_GET['task_id'];
+    } else {
+        exit("An incorrect Task ID value was passed");
+    }
+    //To get the task id:
+    $task_id_sql = "SELECT * FROM task WHERE TaskID=$task_id";
+    $task_id_result = $connection->query($task_id_sql);
+    if (!$task_id_result) {
+        exit("There was a problem fetching results with Delete");
+    }
+//To check if there are any empty records
+    if (0 === $task_id_result->num_rows) {
+        exit("The Task id provided did not match anyone in the database");
+    }
 
-// For COMPLETED TASKS-Get the Task Id and UPDATE the Completed Status on click
+    while ($row = $task_id_result->fetch_assoc()) {
+        $task_name = $row['TaskName'];
+    }
+}
+
+if ($_POST) {
+    //Show form on Page Load but not on Post
+    $delete_form = false;
+    // var_dump($_POST);
+    //Sanitization: If the task id is not an INT, do not continue
+    if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
+        $task_id = $_GET['task_id'];
+    } else {
+        exit("An incorrect Task ID value was passed");
+    }}
+
+// For COMPLETED TASKS-If Operation is complete Get the Task Id and UPDATE the Completed Status on click
+//For DELETE Tasks-If Operation is delete Get the Task Id and Delete the task on click
 //GET the URL key values
 if (isset($_GET)) {
     if ($_GET['operation'] = "complete") {
@@ -75,20 +112,21 @@ if (isset($_GET)) {
             exit("There was a problem with the prepare statement");
         }
         $task_id_statement->close();
-    }}
-
-//If we don't have a task id, do not continue
-if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
-    exit("You have reached this page by mistake");
+    }
+    if ($_GET['operation'] = "delete") {
+        //If there are no rows i.e task is independent
+        // if (0 === $task_id_result->num_rows) {
+        $delete_sql = "DELETE FROM task WHERE TaskID = $task_id";
+        if ($connection->query($delete_sql)) {
+            $delete_message = "Task deleted successfully";
+        } else {
+            exit("There was a problem deleting this Task");
+        }
+    }
+    // }
 }
 
-//SANITIZATION: If the task id is not an INT, do not continue
-if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
-    $task_id = $_GET['task_id'];
-} else {
-    exit("An incorrect value was passed");
-}
-//To check status
+//To Check status if the task is completed or not
 $task_status_sql = "SELECT * FROM task WHERE Completed IS TRUE";
 $task_status_result = $connection->query($task_status_sql);
 //If result is False
@@ -104,6 +142,7 @@ while ($row = $task_status_result->fetch_assoc()) {
 
 }
 
+//To generate the Select Options
 if (isset($_GET)) {
     // Query to generate selection of category from database
     $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
@@ -123,7 +162,7 @@ if (isset($_GET)) {
         }
     }
 
-    //To generate the Task List only for tasks that are not completed
+    //To generate the Task List only for tasks that are not completed and display it
     $task_list_sql = "SELECT * FROM task  WHERE Completed IS NOT TRUE";
 
     if (!$result = $connection->query($task_list_sql)) {
@@ -205,16 +244,28 @@ $connection->close();
     </table>
     <h2>Overdue Tasks</h2>
 
-
     <h2>Completed Tasks</h2>
     <?php if ($task_status_message) {
     echo $task_status_message;
 }
 ?>
-    <ul>
-        <li> <?php echo $task_name; ?></li>
-    </ul>
+    <table>
+        <tr>
+            <th>Task Name</th>
+            <td><?php echo $task_name; ?> </td>
+            <th>Deleted</th>
+            <td></td>
+        </tr>
 
+    </table>
+
+
+    <?php if (delete_form): ?>
+    <p>Are you sure you want to delete the Task
+
+        <?php echo $delete_message; ?>
+        <?php endif;?>
+        <input type="submit" value="Yes,Remove the Task">
 </body>
 
 </html>
