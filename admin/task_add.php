@@ -6,6 +6,7 @@ $task_list = null;
 $temp_taskName = null;
 $staff_id = null;
 $operation = null;
+$task_id_message = null;
 
 // Creating a connection and testing if connection is established or not
 
@@ -46,6 +47,49 @@ if (isset($_POST['task_name'])) {
         $insert->close();
     }
 }
+
+if ($_POST) {
+    if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=?")) {
+        if ($task_id_statement->bind_param("si", $_POST['task_name'], $_POST['task_id'])) {
+            if ($task_id_statement->execute()) {
+                $task_id_message = "You have Completed task successfully";
+            } else {
+                exit("There was a problem with the execute");
+            }
+        } else {
+            exit("There was a problem with the bind_param");
+        }
+    } else {
+        exit("There was a problem with the prepare statement");
+    }
+    $task_id_statement->close();
+}
+// If we don't have a task id, do not continue
+if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
+    exit("You have reached this page by mistake");
+}
+
+// If the task id is not an INT, do not continue
+if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
+    $task_id = $_GET['task_id'];
+} else {
+    exit("An incorrect value was passed");
+}
+
+// $task_id_sql = "SELECT * FROM task where TaskID = $task_id";
+// $task_id_result = $connection->query($task_id_sql);
+// if (!$result) {
+//     exit('There was a problem fetching results');
+// }
+// if (0 === $result->num_rows) {
+//     exit("There was no staff with that ID");
+// }
+
+// while ($row = $result->fetch_assoc()) {
+//     $first_name = $row['FirstName'];
+//     $last_name = $row['LastName'];
+// }
+
 if (isset($_GET)) {
     // Query to generate selection of category from database
     $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
