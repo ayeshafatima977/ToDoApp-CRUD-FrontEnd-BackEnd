@@ -3,10 +3,12 @@ require '../constants.php';
 $categories_select_options = null;
 $message = null;
 $task_list = null;
+$task_name = null;
 $temp_taskName = null;
 $staff_id = null;
 $operation = null;
 $task_id_message = null;
+$completed_form = null;
 
 // Creating a connection and testing if connection is established or not
 
@@ -50,22 +52,22 @@ if (isset($_POST['task_name'])) {
 
 // For Complete Tasks-UPDATE
 
-if ($_POST) {
-    if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=? AND operation=?")) {
-        if ($task_id_statement->bind_param("sis", $_POST['task_name'], $_POST['task_id'], $_POST['operation'])) {
-            if ($task_id_statement->execute()) {
-                $task_id_message = "You have Completed task successfully";
-            } else {
-                exit("There was a problem with the execute");
-            }
-        } else {
-            exit("There was a problem with the bind_param");
-        }
-    } else {
-        exit("There was a problem with the prepare statement");
-    }
-    $task_id_statement->close();
-}
+//  if ($_POST) {
+// if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=? AND operation=?")) {
+//     if ($task_id_statement->bind_param("sis", $_POST['task_name'], $_POST['task_id'], $_POST['operation'])) {
+//         if ($task_id_statement->execute()) {
+//             $task_id_message = "You have Completed task successfully";
+//         } else {
+//             exit("There was a problem with the execute");
+//         }
+//     } else {
+//         exit("There was a problem with the bind_param");
+//     }
+// } else {
+//     exit("There was a problem with the prepare statement");
+// }
+// $task_id_statement->close();
+
 // If we don't have a task id, do not continue
 if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
     exit("You have reached this page by mistake");
@@ -74,7 +76,7 @@ if (!isset($_GET['operation']) || $_GET['operation'] === "") {
     exit("You have reached this page by mistake");
 }
 
-// If the task id is not an INT, do not continue
+//SANITIZATION: If the task id is not an INT, do not continue
 if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
     $task_id = $_GET['task_id'];
 } else {
@@ -85,23 +87,23 @@ if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
 if (filter_var($_GET['operation'], FILTER_SANITIZE_STRING)) {
     $operation = $_GET['operation'];
 } else {
-    exit("An incorrect operation was passed");
+    exit("***An incorrect value was passed***");
 }
 
-// $task_id_sql = "SELECT * FROM task where TaskID = $task_id";
-// $task_id_result = $connection->query($task_id_sql);
-// if (!$result) {
-//     exit('There was a problem fetching results');
-// }
-// if (0 === $result->num_rows) {
-//     exit("There was no staff with that ID");
-// }
+$task_id_sql = "SELECT * FROM task WHERE TaskID = $task_id";
+$task_id_result = $connection->query($task_id_sql);
+//If result is False
+if (!$task_id_result) {
+    exit('There was a problem fetching results');
+}
+if (0 === $task_id_result->num_rows) {
+    exit("There was no task with that ID");
+}
 
-// while ($row = $result->fetch_assoc()) {
-//     $first_name = $row['FirstName'];
-//     $last_name = $row['LastName'];
+while ($row = $task_id_result->fetch_assoc()) {
+    $task_name = $row['TaskName'];
+}
 // }
-
 if (isset($_GET)) {
     // Query to generate selection of category from database
     $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
@@ -204,16 +206,19 @@ $connection->close();
     <h2>Overdue Tasks</h2>
 
     <h2>Completed Tasks</h2>
-    <form action="#" method="POST">
-        <input type="hidden" name="task_id" value="<?php echo $task_id; ?>">
-        <table>
-            <tr>
-                <th>Task ID</th>
-                <th>Task Name</th>
-            </tr>
-        </table>
-        <!-- <input type="submit" value="Completed"> -->
-    </form>
+    <?php echo $task_name; ?>
+    <?php if ($completed_form): ?>
+
+    <input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
+    <input type="submit" value="Yes, Move to Completed list">
+
+    <input type="submit" value="Complete">
+    <?php else: ?>
+    <?php if ($task_id_message) {
+    echo $task_id_message;
+}
+?>
+    <?php endif;?>
 </body>
 
 </html>
