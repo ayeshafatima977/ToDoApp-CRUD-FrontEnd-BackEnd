@@ -207,14 +207,26 @@ $overdue_result = $connection->query($overdue_sql);
 
 $overdue_tasks = $overdue_result->num_rows;
 
-if ($overdue_result->num_rows > 0) {
-
-    while ($row = $result->fetch_assoc()) {
-        $task_name .= $row['TaskName'];
-    }
-
+if (0 === $overdue_result->num_rows) {
+    $overdue_list = '<tr>
+    <td colspan="4">Currently there are no Overdue Tasks</td>
+</tr>';
 } else {
-    echo "There are Currently no Over Due Tasks";
+    while ($row = $overdue_result->fetch_assoc()) {
+        $overdue_list .= sprintf('
+        <tr>
+            <td>%d</td>
+            <td>%s</td>
+            <td>%s</td>
+
+        </tr>
+        ',
+            $row['TaskID'],
+            $row['TaskName'],
+            $row['EndDate']
+        );
+
+    }
 }
 
 $connection->close();
@@ -266,7 +278,7 @@ $connection->close();
 
     <p>You Currently have <?php echo $overdue_tasks; ?>&nbsp;Overdue Task
     </p>
-
+    <p><?php echo $overdue_list ?></p>
     <h2>Completed Tasks</h2>
     <?php if ($task_status_message) {
     echo $task_status_message;
