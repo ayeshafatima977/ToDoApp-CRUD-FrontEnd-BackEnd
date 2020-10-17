@@ -10,6 +10,7 @@ $operation = null;
 $task_status_message = null;
 $delete_form = true;
 $delete_message = null;
+$overdue_tasks = 0;
 
 // Creating a connection and testing if connection is established or not
 
@@ -141,10 +142,9 @@ while ($row = $task_status_result->fetch_assoc()) {
     $task_name .= $row['TaskName'];
 
 }
-
 //To generate the Select Options
 if (isset($_GET)) {
-    // Query to generate selection of category from database
+// Query to generate selection of category from database
     $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
     if (!$categories_result = $connection->query($categories_sql)) {
         echo "Something went wrong with the categories query";
@@ -154,37 +154,40 @@ if (isset($_GET)) {
     if ($categories_result->num_rows > 0) {
         while ($categories = $categories_result->fetch_assoc()) {
             $categories_select_options .= sprintf('
-                        <option value="%s">%s</option>
-                    ',
+<option value="%s">%s</option>
+',
                 $categories['CategoryID'],
                 $categories['CategoryName']
             );
         }
     }
 
-    //To generate the Task List only for tasks that are not completed and display it
-    $task_list_sql = "SELECT * FROM task  WHERE Completed IS NOT TRUE";
+//To generate the Task List only for tasks that are not completed and display it
+    $task_list_sql = "SELECT * FROM task WHERE Completed IS NOT TRUE";
 
     if (!$result = $connection->query($task_list_sql)) {
         echo "Something went wrong with the task list query";
         exit();
     }
+//    var_dump($result);
 
-    // To check if there are any empty records/rows
+// To check if there are any empty records/rows
     if (0 === $result->num_rows) {
-        $task_list = '<tr><td colspan="4">There are no Active Things To Do</td></tr>';
+        $task_list = '<tr>
+    <td colspan="4">There are no Active Things To Do</td>
+</tr>';
     } else {
         while ($row = $result->fetch_assoc()) {
 
             $task_list .= sprintf('
-            <tr>
-                <td>%d</td>
-                <td>%s</td>
-                <td>%s</td>
-                <td><a href="task_add.php?task_id=%d&operation=%s">Complete</a></td>
-                <td><a href="task_add.php?task_id=%d&operation=%s">Delete</a></td>
-            </tr>
-            ',
+<tr>
+    <td>%d</td>
+    <td>%s</td>
+    <td>%s</td>
+    <td><a href="task_add.php?task_id=%d&operation=%s">Complete</a></td>
+    <td><a href="task_add.php?task_id=%d&operation=%s">Delete</a></td>
+</tr>
+',
                 $row['TaskID'],
                 $row['TaskName'],
                 $row['EndDate'],
@@ -195,6 +198,23 @@ if (isset($_GET)) {
 
         }
     }
+}
+
+//To Check the Task is Overdue
+//Instead of Now CURDATE() can also be used
+$overdue_sql = "SELECT * FROM task WHERE EndDate < NOW() AND Completed IS FALSE";
+$overdue_result = $connection->query($overdue_sql);
+
+$overdue_tasks = $overdue_result->num_rows;
+
+if ($overdue_result->num_rows > 0) {
+
+    while ($row = $result->fetch_assoc()) {
+        $task_name .= $row['TaskName'];
+    }
+
+} else {
+    echo "There are Currently no Over Due Tasks";
 }
 
 $connection->close();
@@ -243,6 +263,9 @@ $connection->close();
 
     </table>
     <h2>Overdue Tasks</h2>
+
+    <p>You Currently have <?php echo $overdue_tasks; ?>&nbsp;Overdue Task
+    </p>
 
     <h2>Completed Tasks</h2>
     <?php if ($task_status_message) {

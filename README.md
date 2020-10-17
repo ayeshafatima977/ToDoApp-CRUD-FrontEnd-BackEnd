@@ -42,3 +42,5 @@ https://trello.com/b/L8wJf7BI/sql-todo
 2. https://drive.google.com/file/d/1cfKjysO-IAznZ5sUphKVgnbbMsT326M2/view
 3. https://dev.mysql.com/doc/refman/8.0/en/comments.html
 4. https://www.mysqltutorial.org/mysql-boolean/
+5. https://riptutorial.com/php/example/13256/call-fetch-assoc-on-boolean
+6. https://stackoverflow.com/questions/28253407/store-result-and-get-result-in-mysql-returns-false
