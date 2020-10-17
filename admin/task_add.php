@@ -4,6 +4,8 @@ $categories_select_options = null;
 $message = null;
 $task_list = null;
 $temp_taskName = null;
+$staff_id = null;
+$operation = null;
 
 // Creating a connection and testing if connection is established or not
 
@@ -146,9 +148,16 @@ $connection->close();
     <h2>Overdue Tasks</h2>
 
     <h2>Completed Tasks</h2>
-
-
-
+    <form action="#" method="POST">
+        <input type="hidden" name="task_id" value="<?php echo $task_id; ?>">
+        <table>
+            <tr>
+                <th>Task ID</th>
+                <th>Task Name</th>
+            </tr>
+        </table>
+        <!-- <input type="submit" value="Completed"> -->
+    </form>
 </body>
 
 </html>
