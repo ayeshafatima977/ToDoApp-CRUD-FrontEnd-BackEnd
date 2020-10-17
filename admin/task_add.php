@@ -7,7 +7,7 @@ $task_name = null;
 $temp_taskName = null;
 $staff_id = null;
 $operation = null;
-$task_id_message = null;
+$task_status_message = null;
 $completed_form = null;
 
 // Creating a connection and testing if connection is established or not
@@ -27,12 +27,19 @@ if (isset($_POST['task_name'])) {
     $repeated_tasks_flag = false;
 
     $result = $connection->query($task_list_sql);
+    if (!$result = $connection->query($task_list_sql)) {
+        echo "Something went wrong with the task list query";
+        exit();
+    }
+//If the tasks are repeated don't populate in list and database
     while ($row = $result->fetch_assoc()) {
-        // Add other categories
+        // Add other categories such as Date ,category to check for any repeated
         if ($temp_taskName === $row['TaskName']) {
             $repeated_tasks_flag = true;
         }
+        //var_dump($row);
     }
+
     if (!$repeated_tasks_flag) {
         //Sanitize Input fields using PREPARE statement
         // Add task to the list Here ? indicate Placeholders for the text
@@ -50,28 +57,28 @@ if (isset($_POST['task_name'])) {
     }
 }
 
-// For Complete Tasks-UPDATE
-
-if ($_POST) {
-    if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=? AND operation=?")) {
-        if ($task_id_statement->bind_param("sis", $_POST['task_name'], $_POST['task_id'], $_POST['operation'])) {
-            if ($task_id_statement->execute()) {
-                $task_id_message = "You have Completed task successfully";
+// For COMPLETED TASKS-Get the Task Id and UPDATE the Completed Status on click
+//GET the URL key values
+if (isset($_GET)) {
+    if ($_GET['operation'] = "complete") {
+        // Get the task status from database and update it if user clicks completed
+        if ($task_id_statement = $connection->prepare("UPDATE task SET Completed=1 WHERE TaskID=?")) {
+            if ($task_id_statement->bind_param("i", $_GET['task_id'])) {
+                if ($task_id_statement->execute()) {
+                    $task_id_message = "You have Completed task successfully";
+                } else {
+                    exit("There was a problem with the execute");
+                }
             } else {
-                exit("There was a problem with the execute");
-            }
+                exit("There was a problem with the bind_param");}
         } else {
-            exit("There was a problem with the bind_param");}
-    } else {
-        exit("There was a problem with the prepare statement");
-    }
-    $task_id_statement->close();
-}
-// If we don't have a task id, do not continue
+            exit("There was a problem with the prepare statement");
+        }
+        $task_id_statement->close();
+    }}
+
+//If we don't have a task id, do not continue
 if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
-    exit("You have reached this page by mistake");
-}
-if (!isset($_GET['operation']) || $_GET['operation'] === "") {
     exit("You have reached this page by mistake");
 }
 
@@ -81,26 +88,20 @@ if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
 } else {
     exit("An incorrect value was passed");
 }
-
-// If the operation is not a string, do not continue
-if (filter_var($_GET['operation'], FILTER_SANITIZE_STRING)) {
-    $operation = $_GET['operation'];
-} else {
-    exit("***An incorrect value was passed***");
-}
-
-$task_id_sql = "SELECT * FROM task WHERE TaskID = $task_id";
-$task_id_result = $connection->query($task_id_sql);
+//To check status
+$task_status_sql = "SELECT * FROM task WHERE Completed IS TRUE";
+$task_status_result = $connection->query($task_status_sql);
 //If result is False
-if (!$task_id_result) {
+if (!$task_status_result) {
     exit('There was a problem fetching results');
 }
-if (0 === $task_id_result->num_rows) {
+if (0 === $task_status_result->num_rows) {
     exit("There was no task with that ID");
 }
 
-while ($row = $task_id_result->fetch_assoc()) {
-    $task_name = $row['TaskName'];
+while ($row = $task_status_result->fetch_assoc()) {
+    $task_name .= $row['TaskName'];
+
 }
 
 if (isset($_GET)) {
@@ -122,8 +123,8 @@ if (isset($_GET)) {
         }
     }
 
-    //To generate the Task List
-    $task_list_sql = "SELECT * FROM task";
+    //To generate the Task List only for tasks that are not completed
+    $task_list_sql = "SELECT * FROM task  WHERE Completed IS NOT TRUE";
 
     if (!$result = $connection->query($task_list_sql)) {
         echo "Something went wrong with the task list query";
@@ -204,20 +205,16 @@ $connection->close();
     </table>
     <h2>Overdue Tasks</h2>
 
+
     <h2>Completed Tasks</h2>
-    <?php echo $task_name; ?>
-    <?php if ($completed_form): ?>
-
-    <input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
-    <input type="submit" value="Yes, Move to Completed list">
-
-    <input type="submit" value="Complete">
-    <?php else: ?>
-    <?php if ($task_id_message) {
-    echo $task_id_message;
+    <?php if ($task_status_message) {
+    echo $task_status_message;
 }
 ?>
-    <?php endif;?>
+    <ul>
+        <li> <?php echo $task_name; ?></li>
+    </ul>
+
 </body>
 
 </html>

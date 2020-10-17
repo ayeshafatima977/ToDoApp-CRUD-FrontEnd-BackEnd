@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Task (
     TaskTimeMinutes double(4, 2) NULL,
     StartDate date NULL,
     EndDate date NULL,
-    Completed boolean NOT NULL DEFAULT 1,
+    Completed boolean NOT NULL DEFAULT 0,
     CONSTRAINT CK_Task_Completed CHECK (Completed IN (0, 1)),
     CONSTRAINT FK_Task_TaskCategory FOREIGN KEY (CategoryID) REFERENCES TaskCategory(CategoryID)
 );
