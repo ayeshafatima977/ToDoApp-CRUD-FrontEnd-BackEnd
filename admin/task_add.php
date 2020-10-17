@@ -48,9 +48,11 @@ if (isset($_POST['task_name'])) {
     }
 }
 
+// For Complete Tasks-UPDATE
+
 if ($_POST) {
-    if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=?")) {
-        if ($task_id_statement->bind_param("si", $_POST['task_name'], $_POST['task_id'])) {
+    if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=? AND operation=?")) {
+        if ($task_id_statement->bind_param("sis", $_POST['task_name'], $_POST['task_id'], $_POST['operation'])) {
             if ($task_id_statement->execute()) {
                 $task_id_message = "You have Completed task successfully";
             } else {
@@ -68,12 +70,22 @@ if ($_POST) {
 if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
     exit("You have reached this page by mistake");
 }
+if (!isset($_GET['operation']) || $_GET['operation'] === "") {
+    exit("You have reached this page by mistake");
+}
 
 // If the task id is not an INT, do not continue
 if (filter_var($_GET['task_id'], FILTER_VALIDATE_INT)) {
     $task_id = $_GET['task_id'];
 } else {
     exit("An incorrect value was passed");
+}
+
+// If the operation is not a string, do not continue
+if (filter_var($_GET['operation'], FILTER_SANITIZE_STRING)) {
+    $operation = $_GET['operation'];
+} else {
+    exit("An incorrect operation was passed");
 }
 
 // $task_id_sql = "SELECT * FROM task where TaskID = $task_id";
