@@ -52,22 +52,21 @@ if (isset($_POST['task_name'])) {
 
 // For Complete Tasks-UPDATE
 
-//  if ($_POST) {
-// if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=? AND operation=?")) {
-//     if ($task_id_statement->bind_param("sis", $_POST['task_name'], $_POST['task_id'], $_POST['operation'])) {
-//         if ($task_id_statement->execute()) {
-//             $task_id_message = "You have Completed task successfully";
-//         } else {
-//             exit("There was a problem with the execute");
-//         }
-//     } else {
-//         exit("There was a problem with the bind_param");
-//     }
-// } else {
-//     exit("There was a problem with the prepare statement");
-// }
-// $task_id_statement->close();
-
+if ($_POST) {
+    if ($task_id_statement = $connection->prepare("UPDATE task SET TaskName=? WHERE TaskID=? AND operation=?")) {
+        if ($task_id_statement->bind_param("sis", $_POST['task_name'], $_POST['task_id'], $_POST['operation'])) {
+            if ($task_id_statement->execute()) {
+                $task_id_message = "You have Completed task successfully";
+            } else {
+                exit("There was a problem with the execute");
+            }
+        } else {
+            exit("There was a problem with the bind_param");}
+    } else {
+        exit("There was a problem with the prepare statement");
+    }
+    $task_id_statement->close();
+}
 // If we don't have a task id, do not continue
 if (!isset($_GET['task_id']) || $_GET['task_id'] === "") {
     exit("You have reached this page by mistake");
@@ -103,7 +102,7 @@ if (0 === $task_id_result->num_rows) {
 while ($row = $task_id_result->fetch_assoc()) {
     $task_name = $row['TaskName'];
 }
-// }
+
 if (isset($_GET)) {
     // Query to generate selection of category from database
     $categories_sql = "SELECT CategoryID, CategoryName FROM taskCategory";
