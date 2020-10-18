@@ -218,12 +218,16 @@ if (0 === $overdue_result->num_rows) {
             <td>%d</td>
             <td>%s</td>
             <td>%s</td>
-
+            <td><a href="task_add.php?task_id=%d&operation=%s">Complete</a></td>
+            <td><a href="task_add.php?task_id=%d&operation=%s">Delete</a></td>
         </tr>
         ',
             $row['TaskID'],
             $row['TaskName'],
-            $row['EndDate']
+            $row['EndDate'],
+            $row['TaskID'],
+            "complete",
+            $row['TaskID'], "delete"
         );
 
     }
