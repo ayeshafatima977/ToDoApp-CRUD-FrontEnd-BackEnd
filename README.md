@@ -44,3 +44,4 @@ https://trello.com/b/L8wJf7BI/sql-todo
 4. https://www.mysqltutorial.org/mysql-boolean/
 5. https://riptutorial.com/php/example/13256/call-fetch-assoc-on-boolean
 6. https://stackoverflow.com/questions/28253407/store-result-and-get-result-in-mysql-returns-false
+7. https://www.mysqltutorial.org/mysql-now/

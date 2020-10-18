@@ -278,29 +278,34 @@ $connection->close();
 
     <p>You Currently have <?php echo $overdue_tasks; ?>&nbsp;Overdue Task
     </p>
-    <p><?php echo $overdue_list ?></p>
+    <table>
+        <tr>
+            <th>Task ID</th>
+            <th>Task Name</th>
+            <th>End Date</th>
+            <th>Completed</th>
+            <th>Deleted</th>
+        </tr>
+        <p><?php echo $overdue_list ?></p>
+    </table>
     <h2>Completed Tasks</h2>
-    <?php if ($task_status_message) {
+    <!-- <?php if ($task_status_message) {
     echo $task_status_message;
 }
-?>
+?> -->
     <table>
         <tr>
             <th>Task Name</th>
-            <td><?php echo $task_name; ?> </td>
-            <th>Deleted</th>
-            <td></td>
         </tr>
-
+        <?php echo $task_name; ?>
     </table>
 
 
     <?php if (delete_form): ?>
-    <p>Are you sure you want to delete the Task
-
-        <?php echo $delete_message; ?>
+    <!-- <p>Are you sure you want to delete the Task
+  <?php echo $delete_message; ?>
         <?php endif;?>
-        <input type="submit" value="Yes,Remove the Task">
+        <input type="submit" value="Yes,Remove the Task"> -->
 </body>
 
 </html>
