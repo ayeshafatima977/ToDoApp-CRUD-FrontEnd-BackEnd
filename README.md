@@ -6,6 +6,10 @@ MySQLi Assignment - To-Do List
 
 Ayesha Fatima
 
+# Note For Instructor-To protect from Injection Attack the URL was designed as such as:
+
+URL: http://localhost/todosql/admin/task_add.php?task_id=42&operation=complete
+
 # Purpose of the Project:
 
 For getting competent for developing a database for To-Do App using MySQLi and PHP.
@@ -45,3 +49,4 @@ https://trello.com/b/L8wJf7BI/sql-todo
 5. https://riptutorial.com/php/example/13256/call-fetch-assoc-on-boolean
 6. https://stackoverflow.com/questions/28253407/store-result-and-get-result-in-mysql-returns-false
 7. https://www.mysqltutorial.org/mysql-now/
+8. https://www.phpacademy.xyz/php_beginner/creating_a_personal_todo_list.html

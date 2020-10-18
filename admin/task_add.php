@@ -200,7 +200,7 @@ if (isset($_GET)) {
     }
 }
 
-//To Check the Task is Overdue
+//To Check the Task is Overdue:If the task is not completed by the user the task should show up in overdue list if it has passed the current date
 //Instead of Now CURDATE() can also be used
 $overdue_sql = "SELECT * FROM task WHERE EndDate < NOW() AND Completed IS FALSE";
 $overdue_result = $connection->query($overdue_sql);
@@ -292,17 +292,18 @@ $connection->close();
         </tr>
         <p><?php echo $overdue_list ?></p>
     </table>
+
     <h2>Completed Tasks</h2>
-    <!-- <?php if ($task_status_message) {
-    echo $task_status_message;
-}
-?> -->
+
     <table>
         <tr>
             <th>Task Name</th>
         </tr>
-        <?php echo $task_name; ?>
+
     </table>
+    <ul>
+        <li> <?php echo $task_name; ?></li>
+    </ul>
 
 
     <?php if (delete_form): ?>
