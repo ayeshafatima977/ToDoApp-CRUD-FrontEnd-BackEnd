@@ -120,7 +120,7 @@ if (isset($_GET)) {
         $task_id_statement->close();
     }
     if ($_GET['operation'] === "delete") {
-        $task_delete .= "<li>{$row['TaskName']}</li>";
+
         //If there are no rows i.e task is independent
         // if (0 === $task_id_result->num_rows) {
         $delete_sql = "DELETE FROM task WHERE TaskID = $task_id";
@@ -129,7 +129,7 @@ if (isset($_GET)) {
         } else {
             exit("There was a problem deleting this Task");
         }
-
+        $task_delete .= "<li>{$row['TaskName']}</li>";
     }
     // }
 }
@@ -313,10 +313,16 @@ $connection->close();
 
     <section>
         <h2>Deleted Tasks</h2>
-        <ul>
-            <?php echo $task_delete; ?>
-        </ul>
+        <!-- <ul>
+            <?php //echo $task_delete; ?>
+        </ul> -->
+
+        <?php //if (delete_form): ?>
         <?php echo $delete_message; ?>
+
+        <?php //endif;?>
+
+
     </section>
 </body>
 
