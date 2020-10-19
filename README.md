@@ -51,3 +51,4 @@ https://trello.com/b/L8wJf7BI/sql-todo
 7. https://www.mysqltutorial.org/mysql-now/
 8. https://www.phpacademy.xyz/php_beginner/creating_a_personal_todo_list.html
 9. https://www.w3schools.com/css/css3_buttons.asp
+10. Peer Assistance on Bugs assistance and Review-Amr Fouad;

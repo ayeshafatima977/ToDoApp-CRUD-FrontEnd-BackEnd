@@ -65,6 +65,10 @@ th {
   transform: translateY(4px);
 }
 
+input[type="text"]:focus {
+  background-color: #f44336;
+}
+
 a:link,
 a:visited {
   background-color: #f44336;
