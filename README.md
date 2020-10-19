@@ -50,3 +50,4 @@ https://trello.com/b/L8wJf7BI/sql-todo
 6. https://stackoverflow.com/questions/28253407/store-result-and-get-result-in-mysql-returns-false
 7. https://www.mysqltutorial.org/mysql-now/
 8. https://www.phpacademy.xyz/php_beginner/creating_a_personal_todo_list.html
+9. https://www.w3schools.com/css/css3_buttons.asp

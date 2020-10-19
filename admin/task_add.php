@@ -1,4 +1,11 @@
 <?php
+// GLOBAL variables are stored in PHP's
+// $GLOBALS array.
+$GLOBALS['pageTitle'] = 'To-Do List';
+
+// Show our header.
+include '../templates/header.php';
+
 require '../constants.php';
 $categories_select_options = null;
 $message = null;
@@ -10,6 +17,7 @@ $operation = null;
 $task_status_message = null;
 $delete_form = true;
 $delete_message = null;
+$overdue_list = null;
 $overdue_tasks = 0;
 
 // Creating a connection and testing if connection is established or not
@@ -247,7 +255,6 @@ $connection->close();
 </head>
 
 <body>
-    <h1>My ToDo List </h1>
     <h2>Add Todo</h2>
     <form action="#" method="POST" id="todo_form">
         <label for="task_name">Task</label>
@@ -263,10 +270,10 @@ $connection->close();
             <option value="">Pick a Category</option>
             <?php echo $categories_select_options; ?>
         </select>
-        <input type="submit" value="Add new task">
+        <input type="submit" value="Add new task" id="button">
     </form>
     <h2>Things To Do</h2>
-    <table>
+    <table id="things_to_do">
         <tr>
             <th>Task ID</th>
             <th>Task Name</th>
@@ -282,7 +289,7 @@ $connection->close();
 
     <p>You Currently have <?php echo $overdue_tasks; ?>&nbsp;Overdue Task
     </p>
-    <table>
+    <table id="overdue">
         <tr>
             <th>Task ID</th>
             <th>Task Name</th>
@@ -295,9 +302,9 @@ $connection->close();
 
     <h2>Completed Tasks</h2>
 
-    <table>
+    <table id="completed">
         <tr>
-            <th>Task Name</th>
+            <th>Tasks Completed</th>
         </tr>
 
     </table>
@@ -314,3 +321,6 @@ $connection->close();
 </body>
 
 </html>
+
+<?php // Show our footer.
+include '../templates/footer.php';

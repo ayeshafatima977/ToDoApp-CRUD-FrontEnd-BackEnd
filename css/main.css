@@ -1,0 +1,66 @@
+* {
+  background-color: #ffcf75;
+}
+
+h1 {
+  font-family: "Arial Black", Gadget, sans-serif;
+  text-align: center;
+  /* border: 5px solid #ff8000; */
+}
+
+h2 {
+  margin-top: 10px;
+  padding: 10px;
+  font-family: "Arial Black", Gadget, sans-serif;
+  border: 5px dotted #ff8000;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+th,
+td {
+  text-align: center;
+  padding: 8px;
+}
+
+tr:nth-child(even) hover {
+  background-color: #f2f2f2;
+}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #ff8000;
+  color: #000000;
+}
+
+/* Link:@https://www.w3schools.com/css/css3_buttons.asp */
+/* Borrowed The Button Effect from W3Schools as Liked the effect and have understood how it works */
+#button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 10px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+#button:hover {
+  background-color: #3e8e41;
+}
+
+#button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
